@@ -36,12 +36,16 @@ module DirtyCtrl(
                 Dirty_val <= 2'b00;
                 if (Ld_reg || Rst_reg)
                     NextState <= DIRTY;
+                else
+                    NextState <= State;
             end
             
             DIRTY: begin
                 Dirty_val <= 2'b01;
                 if (Backup_en)
                     NextState <= READ;
+                else
+                    NextState <= State;
             end
             
             READ: begin
@@ -50,12 +54,16 @@ module DirtyCtrl(
                     NextState <= DIRTY_WR;
                 else if (Backup_ack)
                     NextState <= CLEAN;
+                else
+                    NextState <= State;
             end
             
             DIRTY_WR: begin
                 Dirty_val <= 2'b11;
                 if (Backup_ack)
                     NextState <= CLEAN;
+                else
+                    NextState <= State;
             end
         endcase
     end
