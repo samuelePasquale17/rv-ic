@@ -23,6 +23,8 @@ module Timer #(parameter N = 32) (
     wire end_wire;
     wire Rst_cnt;
     
+    wire cnt_en;
+    
     RegN #(
         .N          (N)
     ) register_ticks (
@@ -34,15 +36,20 @@ module Timer #(parameter N = 32) (
         .Pwr_off    (Pwr_off)
     );
     
-    CntModK #(
-        .K          (32'hFFFFFFFF)
+    module CntN #(parameter N = 32) (
+        Clk,
+        Rst,
+        Pwr_off,
+        Vout                      
+    );
+    
+    CntN #(
+        .N          (N)
     ) counter_ticks (
-        .Tc         (),                          
-        .Vout       (wire_a),      
-        .Cnt        (En),                             
-        .Clk        (Clk),
-        .Rst        (Rst_cnt),
-        .Pwr_off    (Pwr_off)
+        .Clk        (cnt_en),
+        .Rst        (Rst),
+        .Pwr_off    (Pwr_off),
+        .Vout       (wire_a) 
     );
     
     CmpN #(
@@ -55,6 +62,7 @@ module Timer #(parameter N = 32) (
     
     assign End = end_wire & En;
     assign Rst_cnt = end_wire | Rst;
+    assign cnt_en = Clk & En;
     
     
 endmodule
