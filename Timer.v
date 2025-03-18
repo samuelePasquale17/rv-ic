@@ -19,7 +19,8 @@ module Timer #(parameter N = 32) (
     output End;
     input Pwr_off;
     
-    wire [N-1:0] wire_a, wire_b;
+    wire [N-1:0] wire_a;
+    wire [N-1:0] wire_b;
     wire end_wire;
     wire Rst_cnt;
     
@@ -34,13 +35,6 @@ module Timer #(parameter N = 32) (
         .Rst        (1'b0),
         .Clk        (Clk),
         .Pwr_off    (Pwr_off)
-    );
-    
-    module CntN #(parameter N = 32) (
-        Clk,
-        Rst,
-        Pwr_off,
-        Vout                      
     );
     
     CntN #(
@@ -62,7 +56,6 @@ module Timer #(parameter N = 32) (
     
     assign End = end_wire & En;
     assign Rst_cnt = end_wire | Rst;
-    assign cnt_en = Clk & En;
-    
+    assign cnt_en = Clk & (En | Rst);
     
 endmodule
