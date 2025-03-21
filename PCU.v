@@ -14,6 +14,7 @@ module PCU #(
         PushVal_Buffer,
         Load_Timer,
         PushEn_Buffer,
+        backup_now_ctrl, // start backup now
         Dirty_vals_IC_Reg_Wrapper, // K = number of Wrappers
         Rst_Buffer,
         Backup_Ens_IC_REG_Wrapper, // K = number of Wrappers
@@ -31,6 +32,7 @@ module PCU #(
     input [M-1:0] Load_Timer;
     input [(K*2)-1:0] Dirty_vals_IC_Reg_Wrapper;
     input IsFull_Buffer;
+    input backup_now_ctrl;
     
     output [N+LOG2_K-1:0] PushVal_Buffer;
     output PushEn_Buffer;
@@ -43,6 +45,7 @@ module PCU #(
     
     wire last_wire;
     wire end_wire;
+    wire end_timer_wire;
     wire [1:0] dirty_val_wire;
     wire Rst_CntN_wire;
     wire Rst_Timer_wire;
@@ -54,6 +57,8 @@ module PCU #(
     wire [N-1:0] push_val_buffer_wire;
     
     wire [K-1:0] Backup_Ens_IC_REG_Wrapper_wire;
+
+    assign end_wire = end_timer_wire | backup_now_ctrl;
     
     // FSM
     FSM_PCU fsm_power_cu (
@@ -81,7 +86,7 @@ module PCU #(
         .Load               (Load_Timer),
         .Clk                (Clk),
         .Rst                (Rst_Timer_wire),
-        .End                (end_wire),
+        .End                (end_timer_wire),
         .Pwr_off            (Pwr_off)
     );
     
