@@ -1,6 +1,6 @@
 # RISC-V Instruction Set
 
-![Instruction Set Architecture](isa.png)
+<img src="isa.png" width="500" />
 
 ## Instructions
 
@@ -73,4 +73,81 @@ Stores a byte in memory.
 Stores a halfword in memory.
 
 ### SW (Store Word)
-`M[rs1 + imm]...
+`M[rs1 + imm] = rs2`
+Stores a word in memory.
+
+### ADDI (Add Immediate)
+`rd = rs1 + imm`
+Adds an immediate value to a register.
+
+### SLTI (Set Less Than Immediate)
+`rd = (rs1 < imm) ? 1 : 0`
+Sets rd to 1 if rs1 is less than the immediate value (signed).
+
+### SLTIU (Set Less Than Immediate Unsigned)
+`rd = (rs1 < imm) ? 1 : 0`
+Sets rd to 1 if rs1 is less than the immediate value (unsigned).
+
+### XORI (XOR Immediate)
+`rd = rs1 ^ imm`
+Performs a bitwise XOR between rs1 and an immediate value.
+
+### ORI (OR Immediate)
+`rd = rs1 | imm`
+Performs a bitwise OR between rs1 and an immediate value.
+
+### ANDI (AND Immediate)
+`rd = rs1 & imm`
+Performs a bitwise AND between rs1 and an immediate value.
+
+### SLLI (Shift Left Logical Immediate)
+`rd = rs1 << shamt`
+Shifts rs1 left logically by shamt bits.
+
+### SRLI (Shift Right Logical Immediate)
+`rd = rs1 >> shamt`
+Shifts rs1 right logically by shamt bits.
+
+### SRAI (Shift Right Arithmetic Immediate)
+`rd = rs1 >> shamt`
+Shifts rs1 right arithmetically by shamt bits.
+
+### ADD (Add)
+`rd = rs1 + rs2`
+Adds two registers.
+
+### SUB (Subtract)
+`rd = rs1 - rs2`
+Subtracts rs2 from rs1.
+
+### SLL (Shift Left Logical)
+`rd = rs1 << rs2`
+Shifts rs1 left logically by the value in rs2.
+
+### SLT (Set Less Than)
+`rd = (rs1 < rs2) ? 1 : 0`
+Sets rd to 1 if rs1 is less than rs2 (signed).
+
+### SLTU (Set Less Than Unsigned)
+`rd = (rs1 < rs2) ? 1 : 0`
+Sets rd to 1 if rs1 is less than rs2 (unsigned).
+
+### XOR (XOR)
+`rd = rs1 ^ rs2`
+Performs a bitwise XOR between two registers.
+
+### SRL (Shift Right Logical)
+`rd = rs1 >> rs2`
+Shifts rs1 right logically by the value in rs2.
+
+### SRA (Shift Right Arithmetic)
+`rd = rs1 >> rs2`
+Shifts rs1 right arithmetically by the value in rs2.
+
+### OR (OR)
+`rd = rs1 | rs2`
+Performs a bitwise OR between two registers.
+
+### AND (AND)
+`rd = rs1 & rs2`
+Performs a bitwise AND between two registers.
