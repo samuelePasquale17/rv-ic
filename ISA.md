@@ -1,6 +1,6 @@
 # RISC-V Instruction Set
 
-![Instruction Set Architecture](isa.jpg)
+![Instruction Set Architecture](isa.png)
 
 ## Instructions
 
