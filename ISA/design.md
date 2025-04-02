@@ -2,8 +2,8 @@
 
 | #  | Instruction | Status |
 |----|-------------|--------|
-| 1  | LUI         | ❌ |
-| 2  | AUIPC       | ❌ |
+| 1  | LUI         | ⚠️ |
+| 2  | AUIPC       | ⚠️ |
 | 3  | JAL         | ⚠️ |
 | 4  | JALR        | ⚠️ |
 | 5  | BEQ         | ❌ |
