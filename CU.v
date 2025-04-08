@@ -12,7 +12,13 @@ module CU(
         Clk,
         Rst,
         stand_by,
-        Pwr_off
+        Pwr_off,
+        dirty_vals_cu,
+        backup_ens_cu,
+        backup_acks_cu,
+        backup_Vouts_cu,
+        restore_ens_cu,
+        restore_Vins_cu
     );
     
     input [6:0] opcode;
@@ -24,6 +30,15 @@ module CU(
     input Rst;
     input stand_by;  // freeze execution
     input Pwr_off;
+    
+    
+    
+    output [(3*2)-1:0] dirty_vals_cu;
+    input [3-1:0] backup_ens_cu;
+    input [3-1:0] backup_acks_cu;
+    output [(3*32)-1:0] backup_Vouts_cu;
+    input [3-1:0] restore_ens_cu;
+    input [(3*32)-1:0] restore_Vins_cu;
     
     
     wire [5:0] ctrl_fetch;
@@ -78,18 +93,19 @@ module CU(
         .Ld                 (ld_regs),
         .Vin                (lut_out[31:0]),
         .Vout               (reg1_Vout),
-        .Dirty_val          (),
-        .Backup_en          (),
-        .Backup_ack         (),
-        .Backup_Vout        (),
-        .Rst_DrtyCtrl       (),
-        .Restore_en         (),
-        .Restore_Vin        (),
+        .Dirty_val          (dirty_vals_cu[5:4]),
+        .Backup_en          (backup_ens_cu[2]),
+        .Backup_ack         (backup_acks_cu[2]),
+        .Backup_Vout        (backup_Vouts_cu[95:64]),
+        .Rst_DrtyCtrl       (Rst),
+        .Restore_en         (restore_ens_cu[2]),
+        .Restore_Vin        (restore_Vins_cu[95:64]), 
         .Rst                (Rst),
         .Clk                (Clk),
         .Pwr_off            (Pwr_off)
     );
     
+    assign backup_Vouts_cu[63:47] = 17'b00000000000000000;
     
     // reg EXE/MEM
     RegN_IC_Wrapper #(
@@ -98,18 +114,19 @@ module CU(
         .Ld                 (ld_regs),
         .Vin                (reg1_Vout[14:0]),
         .Vout               (reg2_Vout),
-        .Dirty_val          (),
-        .Backup_en          (),
-        .Backup_ack         (),
-        .Backup_Vout        (),
-        .Rst_DrtyCtrl       (),
-        .Restore_en         (),
-        .Restore_Vin        (),
+        .Dirty_val          (dirty_vals_cu[3:2]),
+        .Backup_en          (backup_ens_cu[1]),
+        .Backup_ack         (backup_acks_cu[1]),
+        .Backup_Vout        (backup_Vouts_cu[46:32]),  
+        .Rst_DrtyCtrl       (Rst),
+        .Restore_en         (restore_ens_cu[1]),
+        .Restore_Vin        (restore_Vins_cu[46:32]),
         .Rst                (Rst),
         .Clk                (Clk),
         .Pwr_off            (Pwr_off)
     );
     
+    assign backup_Vouts_cu[31:1] = 31'b0000000000000000000000000000000;
     
     // reg MEM/WB
     RegN_IC_Wrapper #(
@@ -118,13 +135,13 @@ module CU(
         .Ld                 (ld_regs),
         .Vin                (reg2_Vout[0]),
         .Vout               (reg3_Vout),
-        .Dirty_val          (),
-        .Backup_en          (),
-        .Backup_ack         (),
-        .Backup_Vout        (),
-        .Rst_DrtyCtrl       (),
-        .Restore_en         (),
-        .Restore_Vin        (),
+        .Dirty_val          (dirty_vals_cu[1:0]),
+        .Backup_en          (backup_ens_cu[0]),
+        .Backup_ack         (backup_acks_cu[0]),
+        .Backup_Vout        (backup_Vouts_cu[0]),  
+        .Rst_DrtyCtrl       (Rst),
+        .Restore_en         (restore_ens_cu[0]),
+        .Restore_Vin        (restore_Vins_cu[0]),  
         .Rst                (Rst),
         .Clk                (Clk),
         .Pwr_off            (Pwr_off)
