@@ -87,12 +87,21 @@ module Datapath(
         backup_acks_dp,
         backup_Vouts_dp,
         restore_ens_dp,
-        restore_Vins_dp
+        restore_Vins_dp,
+        
+        // control unit
+        opcode,
+        func3,
+        func7
     );
     
     input Clk;
     input Pwr_off;
     input Rst_Drty_Ctrl;
+    
+    output [6:0] opcode;
+    output [2:0] func3;
+    output [6:0] func7;
     
     // back up => number of IC reg wrappers = 18 + 32 = 50
     output [(50*2)-1:0] dirty_vals_dp;
@@ -187,6 +196,11 @@ module Datapath(
     
     assign VAL_IRAM = ir_Vin_wire;
     assign ADDR_IRAM = pc_Vout_wire;
+    
+    assign opcode = ir_Vout_wire[6:0];
+    assign func3 = ir_Vout_wire[14:12];
+    assign func7 = ir_Vout_wire[31:25];
+    
     
     //// Fetch ////
     
