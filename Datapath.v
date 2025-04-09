@@ -16,6 +16,7 @@ module Datapath(
         // DRAM 
         VOUT_DRAM,
         ADDR_DRAM,
+        VIN_DRAM,
     
         // fetch 
         ld_pc, 
@@ -65,7 +66,6 @@ module Datapath(
         // memory
         ld_out_me, 
         rst_out_me,
-        sel_out_me,
         ld_rd3,
         rst_rd3,
         ld_source_a3,
@@ -118,6 +118,7 @@ module Datapath(
     // DRAM 
     input [31:0] VOUT_DRAM;
     output [31:0] ADDR_DRAM;
+    output [31:0] VIN_DRAM; 
     
     // fetch 
     input ld_pc, rst_pc, ld_nextPc, rst_nextPc, ld_ir, rst_ir;
