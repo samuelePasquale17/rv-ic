@@ -19,6 +19,62 @@ module CU(
         backup_Vouts_cu,
         restore_ens_cu,
         restore_Vins_cu
+        
+        // control word
+        // controlWord[63] = ld_pc
+        // controlWord[62] = rst_pc
+        // controlWord[61] = ld_nextPc
+        // controlWord[60] = rst_nextPc
+        // controlWord[59] = ld_ir
+        // controlWord[58] = rst_ir
+        // controlWord[57:56] = pc_upper [2]
+        // controlWord[55] = sel_nextPc
+        // controlWord[54:52] = cmp_type [3]
+        // controlWord[51:50] = branch_en[2]
+        // controlWord[49] = Rd1En_rf
+        // controlWord[48] = Rd2En_rf
+        // controlWord[47] = rst_rf
+        // controlWord[46] = sel_rs1
+        // controlWord[45:44] = sel_imm [2]
+        // controlWord[43] = rst_rs1
+        // controlWord[42] = ld_rs1
+        // controlWord[41] = ld_rs2
+        // controlWord[40] = rst_rs2
+        // controlWord[39] = ld_imm
+        // controlWord[38] = rst_imm
+        // controlWord[37] = ld_rd1
+        // controlWord[36] = rst_rd1
+        // controlWord[35] = ld_source_b1
+        // controlWord[34] = rst_source_b1
+        // controlWord[33] = ld_source_a1
+        // controlWord[32] = rst_source_a1
+        // controlWord[31] = ld_source_a2
+        // controlWord[30] = rst_source_a2
+        // controlWord[29] = ld_source_b2
+        // controlWord[28] = rst_source_b2
+        // controlWord[27:24] = ctrl_alu [4]
+        // controlWord[23] = sel_rs2_alu
+        // controlWord[22:21] = sel_out_alu [2]
+        // controlWord[20] = ld_rd2
+        // controlWord[19] = rst_rd2
+        // controlWord[18] = ld_me
+        // controlWord[17] = rst_me
+        // controlWord[16] = rst_out_alu
+        // controlWord[15] = ld_out_alu
+        // controlWord[14] = ld_out_me
+        // controlWord[13] = rst_out_me
+        // controlWord[12] = ld_rd3
+        // controlWord[11] = rst_rd3
+        // controlWord[10] = ld_source_a3
+        // controlWord[9] = rst_source_a3
+        // controlWord[8] = ld_source_b3
+        // controlWord[7] = rst_source_b3
+        // controlWord[6] = en_mem
+        // controlWord[5] = sel_out_me
+        // controlWord[4] = sig_ext_mem
+        // controlWord[3] = rw_mem
+        // controlWord[2:1] = b_h_w_mem [2]
+        // controlWord[0] = WEn_rf
     );
     
     input [6:0] opcode;

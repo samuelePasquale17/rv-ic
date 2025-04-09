@@ -22,7 +22,7 @@ module LUT_CU(
 
     always @(*) begin
         if (!En)
-            CtrlWrd = 56'b0;
+            CtrlWrd = 58'b0;
         else begin
             casex ({func7, func3, opcode})
                 // opcode func3 func7
