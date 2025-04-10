@@ -224,6 +224,14 @@ def read_and_reverse_file(filename):
         for code in final_file:
             print(code)
 
+        # Save the result to the output file
+        with open("tb.mem", "w") as output_file:
+            for i in range (len(final_file)):
+                if (i == len(final_file)-1):
+                    output_file.write(final_file[i])
+                else:
+                    output_file.write(final_file[i] + "\n")
+            
 
 
     except FileNotFoundError:
