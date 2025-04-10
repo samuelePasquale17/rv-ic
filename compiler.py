@@ -213,6 +213,9 @@ def read_and_reverse_file(filename):
 
                             final_file.append(code)
                     
+                    elif (instr == "NOP"):
+                        code = "00000000000000000000000000000000"
+                        final_file.append(code)
                     else:  # label
                         pass
 
