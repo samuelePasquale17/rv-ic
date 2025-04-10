@@ -209,7 +209,7 @@ module CU(
         .N                  (3),
         .M                  (6)
     ) mux_fetch (
-        .Vin                ({ctrl_fetch, 6'b010101, 6'b000000}),
+        .Vin                ({6'b000000, 6'b010101, ctrl_fetch}),
         .Sel                (sel_muxes),
         .Vout               (controlWord[63:58])
     );
@@ -219,7 +219,7 @@ module CU(
         .N                  (3),
         .M                  (26)
     ) mux_dec (
-        .Vin                ({lut_out[57:32], 26'b00000000001000100101010101, 26'b00000000000000000000000000}),
+        .Vin                ({26'b00000000000000000000000000, 26'b00000000001000100101010101, lut_out[57:32]}),
         .Sel                (sel_muxes),
         .Vout               (controlWord[57:32])
     );
@@ -229,7 +229,7 @@ module CU(
         .N                  (3),
         .M                  (17)
     ) mux_exe (
-        .Vin                ({reg1_Vout[31:15], 17'b01010000000010110, 17'b00000000000000000}),
+        .Vin                ({17'b00000000000000000, 17'b01010000000010110, reg1_Vout[31:15]}),
         .Sel                (sel_muxes),
         .Vout               (controlWord[31:15])
     );
@@ -239,7 +239,7 @@ module CU(
         .N                  (3),
         .M                  (14)
     ) mux_mem (
-        .Vin                ({reg2_Vout[14:1], 14'b01010101000000, 14'b00000000000000}),
+        .Vin                ({14'b00000000000000, 14'b01010101000000, reg2_Vout[14:1]}),
         .Sel                (sel_muxes),
         .Vout               (controlWord[14:1])
     );
@@ -249,7 +249,7 @@ module CU(
         .N                  (3),
         .M                  (1)
     ) mux_wb (
-        .Vin                ({reg3_Vout, 1'b0, 1'b0}),
+        .Vin                ({1'b0, 1'b0, reg3_Vout}),
         .Sel                (sel_muxes),
         .Vout               (controlWord[0])
     );

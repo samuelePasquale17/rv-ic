@@ -23,7 +23,7 @@ module ALU #(
         // Ctrl = 1000 => SLTU
         // Ctrl = 1001 => SLT
         // Ctrl = 1010 => LUI B
-        // Ctrl = 1011 => Shift Left B by 12
+        // Ctrl = 1011 => Shift Left B by 16
         // Ctrl = 1100 => (B << 12) + A
         Res,
         Cmp
@@ -53,7 +53,7 @@ module ALU #(
         else    if (Ctrl === 4'b0111) Res <= A << B;                // SLL
         else    if (Ctrl === 4'b1000) Cmp <= (A < B) ? 1'b1 : 1'b0; // SLTU
         else    if (Ctrl === 4'b1001) Cmp <= ($signed(A) < $signed(B)) ? 1'b1 : 1'b0; // SLT
-        else    if (Ctrl === 4'b1011) Res <= B << 12;               // Shift Left B by 12
+        else    if (Ctrl === 4'b1011) Res <= B << 16;               // Shift Left B by 16
         else    if (Ctrl === 4'b1100) Res <= (B << 12) + A;         // (B << 12) + A
     end
 endmodule

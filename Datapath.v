@@ -127,13 +127,15 @@ module Datapath(
     input sel_nextPc;
     input [2:0] cmp_type;
     input [1:0] branch_en;
-    input Rd1En_rf, Rd2En_rf, rst_rf, sel_rs1, sel_imm, rst_rs1, ld_rs1, ld_rs2, rst_rs2, ld_imm, rst_imm;
+    input [1:0] sel_imm;
+    input Rd1En_rf, Rd2En_rf, rst_rf, sel_rs1, rst_rs1, ld_rs1, ld_rs2, rst_rs2, ld_imm, rst_imm;
     input ld_rd1, rst_rd1, ld_source_b1, rst_source_b1, ld_source_a1, rst_source_a1;
     input [1:0] pc_upper;
     
     // execute
+    input [3:0] ctrl_alu;
     input ld_source_a2, rst_source_a2, ld_source_b2, rst_source_b2;
-    input ctrl_alu, sel_rs2_alu, ld_rd2, rst_rd2;
+    input sel_rs2_alu, ld_rd2, rst_rd2;
     input [1:0] sel_out_alu;
     input ld_me, rst_me;
     input rst_out_alu, ld_out_alu;
@@ -191,12 +193,15 @@ module Datapath(
     wire [31:0] Vin_me_wire;
     wire [31:0] rd2_Vout_wire;
     wire [31:0] Vin_out_me;
-    wire [19:0] imm4;
+    wire [31:0] imm4;
     wire [31:0] add_to_pc;
+    wire [31:0] pc_out_sig;
+    wire [31:0] val_res_alu;
+    wire [31:0] out_me_forw;
     
     
-    assign VAL_IRAM = ir_Vin_wire;
-    assign ADDR_IRAM = pc_Vout_wire;
+    assign ir_Vin_wire = VAL_IRAM;
+    assign ADDR_IRAM = pc_out_sig;
     
     assign opcode = ir_Vout_wire[6:0];
     assign func3 = ir_Vout_wire[14:12];
@@ -215,7 +220,7 @@ module Datapath(
         .Dirty_val                  (dirty_vals_dp[99:98]),
         .Backup_en                  (backup_ens_dp[49]),
         .Backup_ack                 (backup_acks_dp[49]),
-        .Backup_Vout                (backup_Vouts_dp[1599:1568]),
+        .Backup_Vout                (pc_out_sig),
         .Rst_DrtyCtrl               (Rst_Drty_Ctrl),
         .Restore_en                 (restore_ens_dp[49]),
         .Restore_Vin                (restore_Vins_dp[1599:1568]),
@@ -223,6 +228,8 @@ module Datapath(
         .Clk                        (Clk),
         .Pwr_off                    (Pwr_off)
     );
+    
+    assign backup_Vouts_dp[1599:1568] = pc_out_sig;
     
     
     // IR
@@ -267,7 +274,7 @@ module Datapath(
     Adder #(
         .N                          (32)
     ) incr_pc (
-        .A                          (pc_Vout_wire),
+        .A                          (pc_out_sig),
         .B                          (32'h00000000),
         .Cin                        (1'b1),
         .Cout                       (),
@@ -290,7 +297,7 @@ module Datapath(
         .N                          (2),
         .M                          (32)
     ) mux_sel_nextPC_or_Rs1 (
-        .Vin                        ({pc_Vout_wire, rf_rs1_out}),
+        .Vin                        ({rf_rs1_out, pc_Vout_wire}),  
         .Sel                        (sel_nextPc),
         .Vout                       (next_pc_j_branch)
     );
@@ -312,7 +319,7 @@ module Datapath(
         .N                          (3),
         .M                          (32)
     ) mux_sel_pc_upper (
-        .Vin                        ({imm_Vout_ext_jal_wire, {ir_Vout_wire[31:20], 12'b000000000000}, imm2}),
+        .Vin                        ({imm2, {ir_Vout_wire[31:20], 20'h00000}, imm_Vout_ext_jal_wire}),  
         .Sel                        (pc_upper),
         .Vout                       (add_to_pc)
     );
@@ -330,7 +337,7 @@ module Datapath(
         .N                          (2),
         .M                          (32)
     ) mux_sel_nextPC (
-        .Vin                        ({next_pc_Vout_wire, next_pc_jump}),
+        .Vin                        ({next_pc_jump, next_pc_Vout_wire}),  
         .Sel                        (sel_pc_ctrl_wire),
         .Vout                       (pc_Vin_wire)
     );
@@ -376,7 +383,7 @@ module Datapath(
         .N                          (2),
         .M                          (32)
     ) mux_sel_Rs1 (
-        .Vin                        ({next_pc_Vout_wire, rf_rs1_out}),
+        .Vin                        ({rf_rs1_out, next_pc_Vout_wire}),  
         .Sel                        (sel_rs1),
         .Vout                       (val_Rs1)
     );
@@ -386,7 +393,7 @@ module Datapath(
         .N                          (4),
         .M                          (32)
     ) mux_sel_imm (
-        .Vin                        ({imm1, imm2, imm3, imm4}),
+        .Vin                        ({imm4, imm3, imm2, imm1}),  
         .Sel                        (sel_imm),
         .Vout                       (imm_Vout)
     );
@@ -485,7 +492,7 @@ module Datapath(
         .N                          (32)
     ) reg_rd1 (
         .Ld                         (ld_rd1),
-        .Vin                        (ir_Vout_wire[11:7]),
+        .Vin                        ({27'b000000000000000000000000000, ir_Vout_wire[11:7]}),
         .Vout                       (rd1_Vout_wire),
         .Dirty_val                  (dirty_vals_dp[87:86]),
         .Backup_en                  (backup_ens_dp[43]),
@@ -504,7 +511,7 @@ module Datapath(
         .N                          (32)
     ) reg_sourceA1 (
         .Ld                         (ld_source_a1),
-        .Vin                        (ir_Vout_wire[19:15]),
+        .Vin                        ({27'b000000000000000000000000000, ir_Vout_wire[19:15]}),
         .Vout                       (Vout_source_a1_wire),
         .Dirty_val                  (dirty_vals_dp[85:84]),
         .Backup_en                  (backup_ens_dp[42]),
@@ -523,7 +530,7 @@ module Datapath(
         .N                          (32)
     ) reg_sourceB1 (
         .Ld                         (ld_source_b1),
-        .Vin                        (ir_Vout_wire[24:20]),
+        .Vin                        ({27'b000000000000000000000000000, ir_Vout_wire[24:20]}),
         .Vout                       (Vout_source_b1_wire),
         .Dirty_val                  (dirty_vals_dp[83:82]),
         .Backup_en                  (backup_ens_dp[41]),
@@ -542,7 +549,7 @@ module Datapath(
         .N                          (2),
         .M                          (32)
     ) mux_forw_rs1 (
-        .Vin                        ({rf_write_val_wire, val_Rs1}),
+        .Vin                        ({val_Rs1, rf_write_val_wire}),  
         .Sel                        (1'b1),
         .Vout                       (Vin_rs1_wire)
     );
@@ -552,7 +559,7 @@ module Datapath(
         .N                          (2),
         .M                          (32)
     ) mux_forw_rs2 (
-        .Vin                        ({rf_write_val_wire, rf_rs2_wire}),
+        .Vin                        ({rf_rs2_wire, rf_write_val_wire}),  
         .Sel                        (1'b1),
         .Vout                       (Vin_rs2_wire)
     );
@@ -562,7 +569,7 @@ module Datapath(
         .N                          (2),
         .M                          (32)
     ) mux_forw_imm (
-        .Vin                        ({rf_write_val_wire, imm_Vout}),
+        .Vin                        ({imm_Vout, rf_write_val_wire}),  
         .Sel                        (1'b1),
         .Vout                       (Vin_imm_wire)
     );
@@ -587,7 +594,7 @@ module Datapath(
         .N                          (2),
         .M                          (32)
     ) mux_rs2_inp_alu (
-        .Vin                        ({Vout_imm_wire, Vout_rs2_wire}),
+        .Vin                        ({Vout_rs2_wire, Vout_imm_wire}),  
         .Sel                        (sel_rs2_alu),
         .Vout                       (val_rs2)
     );
@@ -597,7 +604,7 @@ module Datapath(
         .N                          (3),
         .M                          (32)
     ) mux_out_alu (
-        .Vin                        ({alu_out_wire, Vout_rs2_wire, Vout_rs1_wire}),
+        .Vin                        ({Vout_rs1_wire, Vout_rs2_wire, alu_out_wire}),   
         .Sel                        (sel_out_alu),
         .Vout                       (val_res_alu)
     );
@@ -713,7 +720,7 @@ module Datapath(
         .N                          (3),
         .M                          (32)
     ) mux_forw_rs1_alu (
-        .Vin                        ({Vout_out_alu_wire, rf_write_val_wire, Vout_rs1_wire}),
+        .Vin                        ({Vout_rs1_wire, rf_write_val_wire, Vout_out_alu_wire}),  
         .Sel                        (2'b10),
         .Vout                       (alu_a_wire)
     );
@@ -723,7 +730,7 @@ module Datapath(
         .N                          (4),
         .M                          (32)
     ) mux_forw_rs2_alu (
-        .Vin                        ({Vout_out_alu_wire, rf_write_val_wire, rf_write_val_wire, val_rs2}),
+        .Vin                        ({val_rs2, rf_write_val_wire, rf_write_val_wire, Vout_out_alu_wire}),  
         .Sel                        (2'b11),
         .Vout                       (alu_b_wire)
     );
@@ -733,7 +740,7 @@ module Datapath(
         .N                          (3),
         .M                          (32)
     ) mux_forw_ME (
-        .Vin                        ({Vout_out_alu_wire, rf_write_val_wire, Vout_rs1_wire}),
+        .Vin                        ({Vout_rs1_wire, rf_write_val_wire, Vout_out_alu_wire}),  
         .Sel                        (2'b10),
         .Vout                       (val_me_forw)
     );
@@ -745,7 +752,7 @@ module Datapath(
         .N                          (2),
         .M                          (32)
     ) mux_out_ME (
-        .Vin                        ({out_me_forw, VOUT_DRAM}),
+        .Vin                        ({VOUT_DRAM, out_me_forw}),  
         .Sel                        (sel_out_me),
         .Vout                       (Vin_out_me)
     );
@@ -849,7 +856,7 @@ module Datapath(
         .N                          (2),
         .M                          (32)
     ) mux_forw_OUT_ME (
-        .Vin                        ({rf_write_val_wire, Vout_out_alu_wire}),
+        .Vin                        ({Vout_out_alu_wire, rf_write_val_wire}),  
         .Sel                        (1'b1),
         .Vout                       (out_me_forw)
     );

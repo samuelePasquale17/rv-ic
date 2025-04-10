@@ -5,7 +5,7 @@
 
 
 module RISCV(
-        Ckl,
+        Clk,
         Rst,
         Rst_DRAM,
         Rst_IRAM,

@@ -28,7 +28,7 @@ module IRAM #(
         for (i = 0; i < K; i = i + 1) begin
             mem[i] = 0;
         end
-        $readmemh("code.mem", mem);
+        $readmemh("IRAM.mem", mem);
     end
     
     // Read operation

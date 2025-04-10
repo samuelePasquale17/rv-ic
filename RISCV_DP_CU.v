@@ -63,10 +63,17 @@ module RISCV_DP_CU #(
     wire [6:0] func7;
     wire [2:0] func3; 
     
+    wire rst_program_counter, load_program_counter;
+    
     assign En = controlWord[6];
     assign Rw = controlWord[3];
     assign SigExt = controlWord[4];
     assign B_H_W = controlWord[2:1];
+    
+    
+    assign rst_program_counter = controlWord[62];
+    
+    assign load_program_counter = controlWord[63];
     
     
     Datapath datapath_rv (
@@ -84,8 +91,8 @@ module RISCV_DP_CU #(
         .VIN_DRAM                   (VIN_DRAM),
     
         // fetch 
-        .ld_pc                      (controlWord[63]), 
-        .rst_pc                     (controlWord[62]), 
+        .ld_pc                      (load_program_counter), 
+        .rst_pc                     (rst_program_counter), 
         .ld_nextPc                  (controlWord[61]), 
         .rst_nextPc                 (controlWord[60]), 
         .ld_ir                      (controlWord[59]), 
@@ -153,7 +160,7 @@ module RISCV_DP_CU #(
         .backup_acks_dp             (backup_acks_rv[52:3]),
         .backup_Vouts_dp            (backup_Vouts_rv[(53*32)-1:(3*32)]),
         .restore_ens_dp             (restore_ens_rv[52:3]),
-        .restore_Vins_dp            (restore_Vins_rv[(53*32)-1:(3*32)-1]),
+        .restore_Vins_dp            (restore_Vins_rv[(53*32)-1:(3*32)]),
         
         // control unit
         .opcode                     (opcode),
