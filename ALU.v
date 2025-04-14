@@ -51,8 +51,8 @@ module ALU #(
         else    if (Ctrl === 4'b0101) Res <= A >> B;                // SRL
         else    if (Ctrl === 4'b0110) Res <= $signed(A) >>> B;      // SRA
         else    if (Ctrl === 4'b0111) Res <= A << B;                // SLL
-        else    if (Ctrl === 4'b1000) Cmp <= (A < B) ? 1'b1 : 1'b0; // SLTU
-        else    if (Ctrl === 4'b1001) Cmp <= ($signed(A) < $signed(B)) ? 1'b1 : 1'b0; // SLT
+        else    if (Ctrl === 4'b1000) Res[0] <= (A < B) ? 1'b1 : 1'b0; // SLTU
+        else    if (Ctrl === 4'b1001) Res[0] <= ($signed(A) < $signed(B)) ? 1'b1 : 1'b0; // SLT
         else    if (Ctrl === 4'b1011) Res <= B << 16;               // Shift Left B by 16
         else    if (Ctrl === 4'b1100) Res <= (B << 12) + A;         // (B << 12) + A
     end
